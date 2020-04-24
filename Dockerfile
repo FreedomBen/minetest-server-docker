@@ -1,6 +1,11 @@
 FROM ubuntu:18.04
 MAINTAINER Benjamin Porter
 
+# Configuration documentation:
+# - https://wiki.minetest.net/Setting_up_a_server
+# - https://wiki.minetest.net/Setting_up_a_server#Protecting_your_server
+# - https://wiki.minetest.net/Games/Minetest_Game
+
 # TODO:  Have build script pass in arg
 ARG MINETEST_VERSION=5.1.1
 ENV DOCKER_HOME /home/docker
@@ -28,6 +33,7 @@ RUN apt-get update && apt-get upgrade -y \
     locales \
     wget \
  && apt-get install -y --no-install-recommends \
+    unzip \
     g++ \
     make \
     cmake \
@@ -66,8 +72,13 @@ RUN cd /tmp \
  && tar xzvf ${MINETEST_VERSION}.tar.gz \
  && cd minetest-${MINETEST_VERSION} \
  && cmake . -DRUN_IN_PLACE=TRUE -DBUILD_CLIENT=0 \
- && make -j$(nproc) \
- && mv bin/minetestserver /usr/local/bin/ \
+ && make -j$(nproc)
+
+RUN mkdir -p /Minetest/bin /Minetest/games /Minetest/worlds \
+ && cd /tmp/minetest-${MINETEST_VERSION} \
+ && mv bin/minetestserver /Minetest/bin/ \
+ && mv builtin doc fonts lib misc po textures /Minetest/ \
+ && chown docker:docker -R /Minetest \
  && rm -rf /tmp/*
 
 # Remove compilers
@@ -78,10 +89,24 @@ RUN apt-get purge -y \
     cmake \
  && apt-get -y autoremove
 
+# Copy base config
+COPY --chown=docker:docker minetest.conf /Minetest/
+
+# Copy base World
+ADD --chown=docker:docker Original-07.tar.gz /Minetest/worlds/
+
+# Install minetest game
+RUN cd /Minetest/games \
+ && wget https://github.com/minetest/minetest_game/archive/${MINETEST_VERSION}.zip \
+ && unzip ${MINETEST_VERSION}.zip \
+ && rm *.zip \
+ && mv minetest_game* minetest_game
+
 EXPOSE 30303/udp
 
 USER docker
 WORKDIR /home/docker
 
 ENTRYPOINT ["/usr/local/bin/dumb-init", "--"]
-CMD ["/usr/local/bin/minetestserver"]
+CMD ["/Minetest/bin/minetestserver", "--port", "30303", "--gameid", "minetest", "--worldname", "Original"]
+#CMD ["/Minetest/bin/minetestserver", "--gameid", "minetest", "--worldname", "world"]
