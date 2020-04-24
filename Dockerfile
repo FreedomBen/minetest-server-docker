@@ -93,7 +93,7 @@ RUN apt-get purge -y \
 COPY --chown=docker:docker minetest.conf /Minetest/
 
 # Copy base World
-ADD --chown=docker:docker Original-07.tar.gz /Minetest/worlds/
+#ADD --chown=docker:docker Original-07.tar.gz /Minetest/worlds/
 
 # Install minetest game
 RUN cd /Minetest/games \
