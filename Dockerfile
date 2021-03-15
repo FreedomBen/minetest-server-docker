@@ -102,6 +102,14 @@ RUN cd /Minetest/games \
  && rm *.zip \
  && mv minetest_game* minetest_game
 
+# Install world-edit mod (comment out to remove)
+ARG WORLDEDIT_VERSION=1.2
+RUN mkdir -p /Minetest/mods \
+ && cd /Minetest/mods \
+ && wget https://github.com/Uberi/Minetest-WorldEdit/archive/${WORLDEDIT_VERSION}.zip \
+ && unzip ${WORLDEDIT_VERSION}.zip \
+ && rm *.zip
+
 EXPOSE 30303/udp
 
 USER docker
