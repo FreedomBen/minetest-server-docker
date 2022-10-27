@@ -119,12 +119,15 @@ EXPOSE 30303/udp
 USER docker
 WORKDIR /home/docker
 
-ENV PORT ${PORT:-30303}
-
 ENTRYPOINT [ "tini", "--" ]
 CMD [ \
   "/Minetest/bin/minetestserver", \
-  "--port", "${PORT}", \
-  "--gameid", "minetest", \
-  "--worldname", "Original" \
+  "--port", "30303", \
+  "--gameid", "minetest" \
 ]
+# CMD [ \
+#   "/Minetest/bin/minetestserver", \
+#   "--port", "${PORT}", \
+#   "--gameid", "minetest", \
+#   "--worldname", "Original" \
+# ]
