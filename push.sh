@@ -1,3 +1,7 @@
 #!/usr/bin/env bash
 
-sudo podman push --authfile ~/.docker/config.json quay.io/freedomben/minetest:latest
+# docker push docker.io/freedomben/minetest:latest
+# docker push docker.io/freedomben/minetest:latest
+
+podman push docker.io/freedomben/minetest:latest
+podman push docker.io/freedomben/minetest:latest
