@@ -119,25 +119,10 @@ EXPOSE 30303/udp
 USER docker
 WORKDIR /home/docker
 
+ENV PORT ${PORT:-30303}
+
 ENTRYPOINT ["/usr/local/bin/dumb-init", "--"]
-CMD ["/Minetest/bin/minetestserver", "--port", "30303", "--gameid", "minetest", "--worldname", "Original"]
-
-
-
-
-
-
-
-
-
-
-USER docker
-
-WORKDIR /app
-
-ENV HOST ${HOST:-localhost}
-ENV PORT ${PORT:-4000}
-ENV BIND_ADDR ${BIND_ADDR:-0.0.0.0}
+CMD ["/Minetest/bin/minetestserver", "--port", "${PORT}", "--gameid", "minetest", "--worldname", "Original"]
 
 ENTRYPOINT [ "tini", "--" ]
 CMD [ "mix", "phx.server" ]
