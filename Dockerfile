@@ -121,8 +121,10 @@ WORKDIR /home/docker
 
 ENV PORT ${PORT:-30303}
 
-ENTRYPOINT ["/usr/local/bin/dumb-init", "--"]
-CMD ["/Minetest/bin/minetestserver", "--port", "${PORT}", "--gameid", "minetest", "--worldname", "Original"]
-
 ENTRYPOINT [ "tini", "--" ]
-CMD [ "mix", "phx.server" ]
+CMD [ \
+  "/Minetest/bin/minetestserver", \
+  "--port", "${PORT}", \
+  "--gameid", "minetest", \
+  "--worldname", "Original" \
+]
